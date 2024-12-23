@@ -38,7 +38,7 @@ public class GridController : MonoBehaviour
             if(playerTransform.position.x >= item.position.x && playerTransform.position.z >=  item.position.z ){
              if(playerTransform.position.x < 
              item.position.x + 256f && playerTransform.position.z <  item.position.z + 256f){
-                Debug.Log(playerTransform.position);
+                
                
                if(pontoinicial.x != item.position.x || pontoinicial.y != item.position.z){
                     pontoinicial.x = item.position.x;
@@ -53,11 +53,14 @@ public class GridController : MonoBehaviour
 
                     if(ConteinCelula(pontoinicial.x, pontoinicial.y)){
                         CarregarArvores();
+                        Debug.Log("Carregar");
                     }else{
                         CelulaGrid celula = new CelulaGrid(pontoinicial.x, pontoinicial.y);
 
                         Grid.Add(celula);
                         GerarArvores(item);
+
+                        Debug.Log("Gerar");
                     }
 
                 }
