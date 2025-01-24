@@ -14,6 +14,7 @@ public class Arvore
 [System.Serializable]
 public class Cogumelo
 {
+    int id;
     public Vector3 pos;
 
     public Cogumelo(Vector3 v3){
@@ -32,7 +33,9 @@ public class Cave
     public Cave(Vector3 possent){
         pos = possent;
 
-        seed = "1000";
+        seed = "1000" + Random.Range(1,10000);
+
+        
     }
 }
 

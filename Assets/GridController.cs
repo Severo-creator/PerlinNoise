@@ -16,6 +16,8 @@ public class GridController : MonoBehaviour
 
     private List<GameObject> cavesobjs = new List<GameObject>();
 
+    private List<GameObject> cogumelosobjs = new List<GameObject>();
+
     public Vector2 pontoinicial = new Vector2(0,0);
     public Vector2 pontoFinal = new Vector2(0,0);
 
@@ -79,6 +81,13 @@ public class GridController : MonoBehaviour
         foreach(var item in Grid[valorCelula(pontoinicial.x, pontoinicial.y)].cavernas){
             if(GetDistanceXZ(playerTransform.position, item.pos) <= 1){
                 playerTransform.position = Geradorcaverna.FindClosestZero(Mathf.RoundToInt((playerTransform.position.x - pontoinicial.x)), Mathf.RoundToInt((playerTransform.position.z - pontoinicial.y)));
+                if(item.cogumelos.Count == 0){
+                    GerarCogumelos(item);
+                    DestroyCogumelos();
+                }else{
+                    CarregarCogumelos(item);
+                }
+
             }else if(GetDistanceXZ(playerTransform.position, item.pos) <= 10){
                 Geradorcaverna.SetSeed(item.seed);
                 Debug.Log("Carregar caverna");
@@ -86,6 +95,8 @@ public class GridController : MonoBehaviour
         }
         
     }
+
+
 
     private void Reformular(){
 
@@ -161,6 +172,16 @@ public class GridController : MonoBehaviour
         }
         arvores.Clear();
         cavesobjs.Clear();
+    }
+
+    public void DestroyCogumelos(){
+        foreach (var item in cogumelosobjs)
+        {
+            Destroy(item);
+        }
+        
+        cogumelosobjs.Clear();
+        
     }
 
     public bool ConteinCelula(float x, float z){
@@ -267,6 +288,19 @@ public class GridController : MonoBehaviour
         }
    }
 
+   private void CarregarCogumelos(Cave caverna){
+        List<Cogumelo> CoguList = caverna.cogumelos;
+        GameObject duplicatedCave;
+        foreach (var item in CoguList)
+        {
+            duplicatedCave = Instantiate(caveref);
+
+            duplicatedCave.transform.position = item.pos;
+
+            cogumelosobjs.Add(duplicatedCave);
+        }
+   }
+
    float GetDistanceXZ(Vector3 point1, Vector3 point2)
     {
         float deltaX = point2.x - point1.x;
@@ -274,6 +308,37 @@ public class GridController : MonoBehaviour
 
         // Retorna a distância no plano XZ
         return Mathf.Sqrt(deltaX * deltaX + deltaZ * deltaZ);
+    }
+
+    void GerarCogumelos(Cave caverna){
+        int aux;
+         for (int i = 0; i < 16; i++)
+        {
+            for (int a = 0; a < 16; a++){
+                aux = Random.Range(1,15);
+                if(aux == 1){
+                    GameObject duplicatedcave = Instantiate(caveref);
+
+                    float PosXA = (i*16);
+
+                    float PosZA = (a*16);
+
+                    float altura = -246;
+
+
+                    Vector3 novapos = new Vector3(PosXA, altura, PosZA);
+                    
+                    duplicatedcave.transform.position = novapos;
+
+                    cogumelosobjs.Add(duplicatedcave);
+                
+                    Cogumelo cogumelo = new Cogumelo(novapos);
+
+                    caverna.cogumelos.Add(cogumelo); 
+                }
+                
+            }
+        }
     }
 
 
