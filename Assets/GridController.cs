@@ -14,10 +14,16 @@ public class GridController : MonoBehaviour
 
     private List<GameObject> arvores = new List<GameObject>();
 
+    private List<GameObject> cavesobjs = new List<GameObject>();
+
     public Vector2 pontoinicial = new Vector2(0,0);
     public Vector2 pontoFinal = new Vector2(0,0);
 
     public GameObject arvoreref;
+
+    public GameObject caveref;
+
+    public MapGenerator Geradorcaverna;
 
 
 
@@ -53,6 +59,7 @@ public class GridController : MonoBehaviour
 
                     if(ConteinCelula(pontoinicial.x, pontoinicial.y)){
                         CarregarArvores();
+                        CarregarCavernas();
                         Debug.Log("Carregar");
                     }else{
                         CelulaGrid celula = new CelulaGrid(pontoinicial.x, pontoinicial.y);
@@ -66,6 +73,12 @@ public class GridController : MonoBehaviour
                 }
                 
              }
+            }
+        }
+
+        foreach(var item in Grid[valorCelula(pontoinicial.x, pontoinicial.y)].cavernas){
+            if(GetDistanceXZ(playerTransform.position, item.pos) <= 10){
+                Geradorcaverna.SetSeed(item.seed);
             }
         }
         
@@ -139,7 +152,12 @@ public class GridController : MonoBehaviour
         {
             Destroy(item);
         }
+        foreach (var item in cavesobjs)
+        {
+            Destroy(item);
+        }
         arvores.Clear();
+        cavesobjs.Clear();
     }
 
     public bool ConteinCelula(float x, float z){
@@ -174,25 +192,47 @@ public class GridController : MonoBehaviour
             for (int a = 0; a < 16; a++){
                 aux = Random.Range(1,10);
                 if(aux == 1){
-                    GameObject duplicatedArvore = Instantiate(arvoreref);
+                    aux = Random.Range(1,10);
+                    if(aux < 4){
+                        GameObject duplicatedcave = Instantiate(caveref);
 
-                    float PosXA = (i*16) + pontoinicial.x;
+                        float PosXA = (i*16) + pontoinicial.x;
 
-                    float PosZA = (a*16) + pontoinicial.y;
+                        float PosZA = (a*16) + pontoinicial.y;
 
-                    float altura = terreno.GetComponent<Terrain>().SampleHeight(new Vector3(PosXA, 0, PosZA));
+                        float altura = terreno.GetComponent<Terrain>().SampleHeight(new Vector3(PosXA, 0, PosZA));
 
 
-                    Vector3 novapos = new Vector3(PosXA, altura, PosZA);
+                        Vector3 novapos = new Vector3(PosXA, altura, PosZA);
+                        
+                        duplicatedcave.transform.position = novapos;
+
+                        cavesobjs.Add(duplicatedcave);
                     
-                    duplicatedArvore.transform.position = novapos;
+                        Cave cave = new Cave(novapos);
 
-                    arvores.Add(duplicatedArvore);
-                
-                    Arvore arvore = new Arvore(novapos);
+                        Grid[valorCelula(pontoinicial.x, pontoinicial.y)].cavernas.Add(cave);
+                    }
+                    else{
+                        GameObject duplicatedArvore = Instantiate(arvoreref);
 
-                    Grid[valorCelula(pontoinicial.x, pontoinicial.y)].arvores.Add(arvore);
+                        float PosXA = (i*16) + pontoinicial.x;
 
+                        float PosZA = (a*16) + pontoinicial.y;
+
+                        float altura = terreno.GetComponent<Terrain>().SampleHeight(new Vector3(PosXA, 0, PosZA));
+
+
+                        Vector3 novapos = new Vector3(PosXA, altura, PosZA);
+                        
+                        duplicatedArvore.transform.position = novapos;
+
+                        arvores.Add(duplicatedArvore);
+                    
+                        Arvore arvore = new Arvore(novapos);
+
+                        Grid[valorCelula(pontoinicial.x, pontoinicial.y)].arvores.Add(arvore);
+                    }
                 }
             }
         }
@@ -210,6 +250,28 @@ public class GridController : MonoBehaviour
             arvores.Add(duplicatedArvore);
         }
    }
+
+   private void CarregarCavernas(){
+        List<Cave> Cavelist = Grid[valorCelula(pontoinicial.x, pontoinicial.y)].cavernas;
+        GameObject duplicatedCave;
+        foreach (var item in Cavelist)
+        {
+            duplicatedCave = Instantiate(caveref);
+
+            duplicatedCave.transform.position = item.pos;
+
+            cavesobjs.Add(duplicatedCave);
+        }
+   }
+
+   float GetDistanceXZ(Vector3 point1, Vector3 point2)
+    {
+        float deltaX = point2.x - point1.x;
+        float deltaZ = point2.z - point1.z;
+
+        // Retorna a distância no plano XZ
+        return Mathf.Sqrt(deltaX * deltaX + deltaZ * deltaZ);
+    }
 
 
 }
