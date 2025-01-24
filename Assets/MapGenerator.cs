@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public class MapGenerator : MonoBehaviour {
 
@@ -14,6 +15,8 @@ public class MapGenerator : MonoBehaviour {
 	public int randomFillPercent;
 
 	int[,] map;
+
+    int[,] borderedMap;
 
 	void Start() {
 		GenerateMap();
@@ -34,7 +37,7 @@ public class MapGenerator : MonoBehaviour {
 		}
 
 		int borderSize = 1;
-		int[,] borderedMap = new int[width + borderSize * 2,height + borderSize * 2];
+		borderedMap = new int[width + borderSize * 2,height + borderSize * 2];
 
 		for (int x = 0; x < borderedMap.GetLength(0); x ++) {
 			for (int y = 0; y < borderedMap.GetLength(1); y ++) {
@@ -106,6 +109,59 @@ public class MapGenerator : MonoBehaviour {
 		return wallCount;
 	}
 
+    public Vector3 FindClosestZero(int x, int z)
+    {
+
+
+        int[,] grid = borderedMap;
+        int rows = grid.GetLength(0);
+        int cols = grid.GetLength(1);
+
+        if (grid[x, z] == 0)
+        {
+            return new Vector3(x, -246, z);
+        }
+
+        Vector2Int[] directions = new Vector2Int[]
+        {
+            new Vector2Int(-1, 0), 
+            new Vector2Int(1, 0),  
+            new Vector2Int(0, -1), 
+            new Vector2Int(0, 1)   
+        };
+
+        Queue<Vector2Int> queue = new Queue<Vector2Int>();
+        HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
+
+        queue.Enqueue(new Vector2Int(x, z));
+        visited.Add(new Vector2Int(x, z));
+
+        while (queue.Count > 0)
+        {
+            Vector2Int current = queue.Dequeue();
+
+            foreach (Vector2Int dir in directions)
+            {
+                Vector2Int neighbor = current + dir;
+
+                if (neighbor.x >= 0 && neighbor.x < rows && neighbor.y >= 0 && neighbor.y < cols)
+                {
+                    if (!visited.Contains(neighbor))
+                    {
+                        if (grid[neighbor.x, neighbor.y] == 0)
+                        {
+                            return new Vector3(neighbor.x, -246, neighbor.y);
+                        }
+
+                        queue.Enqueue(neighbor);
+                        visited.Add(neighbor);
+                    }
+                }
+            }
+        }
+
+        return new Vector3(-1, -246, -1);
+    }
 
 
 }

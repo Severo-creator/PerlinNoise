@@ -77,8 +77,11 @@ public class GridController : MonoBehaviour
         }
 
         foreach(var item in Grid[valorCelula(pontoinicial.x, pontoinicial.y)].cavernas){
-            if(GetDistanceXZ(playerTransform.position, item.pos) <= 10){
+            if(GetDistanceXZ(playerTransform.position, item.pos) <= 1){
+                playerTransform.position = Geradorcaverna.FindClosestZero(Mathf.RoundToInt((playerTransform.position.x - pontoinicial.x)), Mathf.RoundToInt((playerTransform.position.z - pontoinicial.y)));
+            }else if(GetDistanceXZ(playerTransform.position, item.pos) <= 10){
                 Geradorcaverna.SetSeed(item.seed);
+                Debug.Log("Carregar caverna");
             }
         }
         

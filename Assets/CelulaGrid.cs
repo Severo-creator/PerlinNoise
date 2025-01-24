@@ -32,7 +32,7 @@ public class Cave
     public Cave(Vector3 possent){
         pos = possent;
 
-        seed = Time.time.ToString();
+        seed = "1000";
     }
 }
 

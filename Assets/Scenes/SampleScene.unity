@@ -846,6 +846,8 @@ MonoBehaviour:
   pontoinicial: {x: 0, y: 0}
   pontoFinal: {x: 0, y: 0}
   arvoreref: {fileID: 163379608}
+  caveref: {fileID: 534506090}
+  Geradorcaverna: {fileID: 0}
 --- !u!1 &442111186
 GameObject:
   m_ObjectHideFlags: 0
